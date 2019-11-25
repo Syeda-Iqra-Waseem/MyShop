@@ -1,5 +1,6 @@
 ﻿using MyShop.DataAccess.InMemory;
 using MySop.Core.Models;
+using MySop.Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,11 @@ namespace MyShop.WebUI.Controllers
     {
         ProductRepository context;
         // GET: ProductManager
-
+        ProductCategoryRepository productCategories; 
         public ProductManagerController()
         {
             context = new ProductRepository();
-          
+            productCategories = new ProductCategoryRepository();
 
 
         }
@@ -28,8 +29,10 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Create()
         {
-            Product product = new Product();
-            return View(product);
+            ProductManagerViewModel viewModel = new ProductManagerViewModel();
+            viewModel.Product = new Product();
+            viewModel.ProductCategories =  productCategories.Collection();
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -43,7 +46,8 @@ namespace MyShop.WebUI.Controllers
             {
                 context.Insert(product);
                 context.Commit();
-                return RedirectToAction("Index");
+                 return RedirectToAction("Index");
+                
             }
         }
 
@@ -56,7 +60,10 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-                return View(product);
+                ProductManagerViewModel viewModel = new ProductManagerViewModel();
+                viewModel.Product = product;
+                viewModel.ProductCategories = productCategories.Collection();
+                return View(viewModel);
             }
         }
         [HttpPost]
